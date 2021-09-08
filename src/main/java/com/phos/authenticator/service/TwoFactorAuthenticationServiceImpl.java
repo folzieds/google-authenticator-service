@@ -11,6 +11,8 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import de.taimos.totp.TOTP;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.stereotype.Service;
@@ -57,15 +59,17 @@ public class TwoFactorAuthenticationServiceImpl implements TwoFactorAuthenticati
     @Override
     public BufferedImage generateQr(String account, String issuer) throws WriterException {
         String key = generateSecretKey();
-        String link =  getGoogleBarCode(key, account, issuer);
+        QRData data = new QRData(account, issuer, key);
+        String link =  getGoogleBarCode(data);
         return generateBarCode(link);
     }
 
-    // secret key is gotten from the method
-    private String getGoogleBarCode(String secretKey, String account, String issuer){
+
+    private String getGoogleBarCode(QRData data){
         try{
-            return "otpauth://totp/" + URLEncoder.encode(issuer + ":" + account, "UTF-8").replace("+","%20")
-                    + "?secret=" + URLEncoder.encode(secretKey, "UTF-8");
+            return "otpauth://totp/" + URLEncoder.encode(data.getIssuer() + ":" + data.getAccount(), "UTF-8").replace("+","%20")
+                    + "?secret=" + URLEncoder.encode(data.getKey(), "UTF-8").replace("+","%20")
+                    + "&issuer=" + URLEncoder.encode(data.getIssuer(), "UTF-8").replace("+","%20");
         }catch (UnsupportedEncodingException ex){
             throw new IllegalStateException(ex);
         }
@@ -78,5 +82,13 @@ public class TwoFactorAuthenticationServiceImpl implements TwoFactorAuthenticati
 
         return MatrixToImageWriter.toBufferedImage(bitMatrix);
 
+    }
+
+    @AllArgsConstructor
+    @Getter
+    private class QRData {
+        private String issuer;
+        private String account;
+        private String key;
     }
 }
