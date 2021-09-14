@@ -15,6 +15,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Hex;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.converter.BufferedImageHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
@@ -59,7 +62,7 @@ public class TwoFactorAuthenticationServiceImpl implements TwoFactorAuthenticati
     @Override
     public BufferedImage generateQr(String account, String issuer) throws WriterException {
         String key = generateSecretKey();
-        QRData data = new QRData(account, issuer, key);
+        QRData data = new QRData(issuer,account, key);
         String link =  getGoogleBarCode(data);
         return generateBarCode(link);
     }
@@ -82,6 +85,11 @@ public class TwoFactorAuthenticationServiceImpl implements TwoFactorAuthenticati
 
         return MatrixToImageWriter.toBufferedImage(bitMatrix);
 
+    }
+
+    @Bean
+    public HttpMessageConverter<BufferedImage> createImageHttpMessageConverter() {
+        return new BufferedImageHttpMessageConverter();
     }
 
     @AllArgsConstructor
