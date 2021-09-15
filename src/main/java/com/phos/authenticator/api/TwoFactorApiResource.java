@@ -20,13 +20,8 @@ public class TwoFactorApiResource {
     private TwoFactorAuthenticationService twoFactorAuthenticationService;
 
     @GetMapping("")
-    public String getGoogleOTPCOde(@RequestHeader String secretKey){
-        // TODO: Use the username to get the secret key and confirm the otp
-        return twoFactorAuthenticationService.getOTP(secretKey);
-    }
-    @GetMapping("secret")
-    public String getSecretKey(){
-        return twoFactorAuthenticationService.getSecretKey();
+    public String getGoogleOTPCOde(@RequestParam String username){
+        return twoFactorAuthenticationService.getOTP(username);
     }
 
     @GetMapping(value = "generate", produces = MediaType.IMAGE_PNG_VALUE)

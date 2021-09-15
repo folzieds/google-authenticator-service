@@ -11,9 +11,7 @@ import java.awt.image.BufferedImage;
 
 public interface TwoFactorAuthenticationService {
 
-    String getOTP(String secretKey);
-
-    String getSecretKey();
+    String getOTP(String username);
 
     BufferedImage generateQr(String account, String issuer) throws WriterException;
 
