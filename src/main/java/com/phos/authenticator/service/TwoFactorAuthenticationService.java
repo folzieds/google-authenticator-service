@@ -13,6 +13,6 @@ public interface TwoFactorAuthenticationService {
 
     String getOTP(String username);
 
-    BufferedImage generateQr(String account, String issuer) throws WriterException;
+    BufferedImage generateQr(String username, String issuer) throws WriterException;
 
 }

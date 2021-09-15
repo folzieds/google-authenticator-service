@@ -25,7 +25,7 @@ public class TwoFactorApiResource {
     }
 
     @GetMapping(value = "generate", produces = MediaType.IMAGE_PNG_VALUE)
-    public BufferedImage generateQrCode(@RequestParam("account") String account, @RequestParam("issuer") String issuer) throws WriterException{
-        return twoFactorAuthenticationService.generateQr(account, issuer);
+    public BufferedImage generateQrCode(@RequestParam("username") String username, @RequestParam("issuer") String issuer) throws WriterException{
+        return twoFactorAuthenticationService.generateQr(username, issuer);
     }
 }

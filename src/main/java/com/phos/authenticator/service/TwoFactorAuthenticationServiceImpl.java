@@ -68,7 +68,7 @@ public class TwoFactorAuthenticationServiceImpl implements TwoFactorAuthenticati
     }
 
     public String getSecretKey(String username) {
-        String query = String.format("select username, AES_DECRYPT(secret_key, %s), issuer from authenticate_user where username = '%s'",aesKey,username);
+        String query = String.format("select username, AES_DECRYPT(from_base64(secret_key), '%s') as secret_key, issuer from authenticate_user where username = '%s'",aesKey,username);
         QRData data = jdbcTemplate.queryForObject(query, new QRDataMapper());
 
         return data != null ? data.getKey(): "";
@@ -86,7 +86,7 @@ public class TwoFactorAuthenticationServiceImpl implements TwoFactorAuthenticati
     }
 
     private void saveUserDetails(String username, String key, String issuer) {
-        String query = String.format("insert into authenticate_user values (%s, AES_ENCRYPT(%s,%s), %s)", username,key,aesKey, issuer);
+        String query = String.format("insert into authenticate_user (username, secret_key, issuer) values ('%s',to_base64(AES_ENCRYPT('%s','%s')), '%s')", username,key,aesKey, issuer);
         jdbcTemplate.execute(query);
     }
 
